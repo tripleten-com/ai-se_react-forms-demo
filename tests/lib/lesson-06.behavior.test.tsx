@@ -5,13 +5,13 @@ import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 import * as api from "../../src/utils/api";
 
 vi.mock("../../src/utils/api", () => ({
-  getProfile: vi.fn(() => ({ name: "", email: "" })),
+  getProfile: vi.fn(() => Promise.resolve({ name: "", email: "" })),
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
 async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByLabelText(/name/i), "Alice");
-  await user.type(screen.getByLabelText(/email/i), "alice@example.com");
+  await user.type(await screen.findByLabelText(/name/i), "Alice");
+  await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 }
 
 describe("Lesson 06 — form submission", () => {

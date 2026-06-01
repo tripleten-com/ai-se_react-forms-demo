@@ -1,13 +1,19 @@
-const PROFILE_KEY = 'meshAI_profile';
+const PROFILE_KEY = "react-demo-profile";
 
 export type Profile = {
   name: string;
   email: string;
 };
 
-export function getProfile(): Profile {
-  const stored = localStorage.getItem(PROFILE_KEY);
-  return stored ? (JSON.parse(stored) as Profile) : { name: '', email: '' };
+export function getProfile(): Promise<Profile> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const stored = localStorage.getItem(PROFILE_KEY);
+      resolve(
+        stored ? (JSON.parse(stored) as Profile) : { name: "", email: "" },
+      );
+    }, 2000);
+  });
 }
 
 export function saveProfile(data: Profile): Promise<void> {

@@ -3,33 +3,33 @@ import { describe, it, expect, vi } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 
 vi.mock("../../src/utils/api", () => ({
-  getProfile: vi.fn(() => ({ name: "", email: "" })),
+  getProfile: vi.fn(() => Promise.resolve({ name: "", email: "" })),
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
 describe("Lesson 04 — HTML5 validation attributes", () => {
-  it("name input is required", () => {
+  it("name input is required", async () => {
     render(<ProfileForm />);
-    expect(screen.getByLabelText(/name/i)).toBeRequired();
+    expect(await screen.findByLabelText(/name/i)).toBeRequired();
   });
 
-  it("name input has a minLength of 2", () => {
+  it("name input has a minLength of 2", async () => {
     render(<ProfileForm />);
-    expect(screen.getByLabelText(/name/i)).toHaveAttribute("minLength", "2");
+    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("minLength", "2");
   });
 
-  it("name input has a maxLength of 40", () => {
+  it("name input has a maxLength of 40", async () => {
     render(<ProfileForm />);
-    expect(screen.getByLabelText(/name/i)).toHaveAttribute("maxLength", "40");
+    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("maxLength", "40");
   });
 
-  it("email input has type='email'", () => {
+  it("email input has type='email'", async () => {
     render(<ProfileForm />);
-    expect(screen.getByLabelText(/email/i)).toHaveAttribute("type", "email");
+    expect(await screen.findByLabelText(/email/i)).toHaveAttribute("type", "email");
   });
 
-  it("email input is required", () => {
+  it("email input is required", async () => {
     render(<ProfileForm />);
-    expect(screen.getByLabelText(/email/i)).toBeRequired();
+    expect(await screen.findByLabelText(/email/i)).toBeRequired();
   });
 });

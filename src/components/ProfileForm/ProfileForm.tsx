@@ -1,4 +1,4 @@
-import './ProfileForm.css';
+import "./ProfileForm.css";
 
 export default function ProfileForm() {
   return (
@@ -12,7 +12,6 @@ export default function ProfileForm() {
         <input
           className="profile-form__input"
           id="name"
-          name="name"
           type="text"
           placeholder="John Doe"
         />
@@ -25,7 +24,6 @@ export default function ProfileForm() {
         <input
           className="profile-form__input"
           id="email"
-          name="email"
           type="text"
           placeholder="johndoe@example.com"
         />

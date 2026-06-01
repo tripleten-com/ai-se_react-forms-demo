@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 
 vi.mock("../../src/utils/api", () => ({
-  getProfile: vi.fn(() => ({ name: "", email: "" })),
+  getProfile: vi.fn(() => Promise.resolve({ name: "", email: "" })),
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
@@ -13,8 +13,8 @@ describe("Lesson 03 — useForm hook", () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(screen.getByLabelText(/name/i), "Alice");
-    await user.type(screen.getByLabelText(/email/i), "alice@example.com");
+    await user.type(await screen.findByLabelText(/name/i), "Alice");
+    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 
     expect(screen.getByLabelText(/name/i)).toHaveValue("Alice");
     expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
@@ -24,7 +24,7 @@ describe("Lesson 03 — useForm hook", () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    const nameInput = screen.getByLabelText(/name/i);
+    const nameInput = await screen.findByLabelText(/name/i);
     await user.type(nameInput, "Hi");
     await user.type(nameInput, "{backspace}");
 
