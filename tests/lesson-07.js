@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 07: Pre-Filling Fields from Data\n");
+console.log("\nLesson 06: Form Submission\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -56,50 +56,64 @@ test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("ProfileForm imports getProfile from the API", () => {
+test("ProfileForm imports saveProfile from the API", () => {
   assert(
-    form.includes("getProfile"),
-    'ProfileForm.tsx does not import "getProfile" from ../../utils/api'
+    form.includes("saveProfile"),
+    'ProfileForm.tsx does not import "saveProfile" from ../../utils/api'
   );
 });
 
-test("ProfileForm imports useEffect", () => {
+test("ProfileForm declares isSubmitting state", () => {
   assert(
-    form.includes("useEffect"),
-    'ProfileForm.tsx does not import "useEffect" from React'
+    form.includes("isSubmitting"),
+    "ProfileForm.tsx does not declare isSubmitting state"
   );
 });
 
-test("ProfileForm has a useEffect call", () => {
+test("ProfileForm defines a handleSubmit function", () => {
   assert(
-    form.includes("useEffect("),
-    "ProfileForm.tsx does not call useEffect"
+    form.includes("handleSubmit"),
+    "ProfileForm.tsx does not define a handleSubmit function"
   );
 });
 
-test("The useEffect calls getProfile", () => {
+test("handleSubmit calls e.preventDefault()", () => {
   assert(
-    form.includes("getProfile("),
-    "The useEffect does not call getProfile() — this is how the stored profile is read on mount"
+    form.includes("preventDefault"),
+    "handleSubmit does not call e.preventDefault() — without it the browser reloads on submit"
   );
 });
 
-test("The useEffect calls setValues with the profile data", () => {
+test("The form element uses onSubmit", () => {
   assert(
-    form.includes("setValues("),
-    "The useEffect does not call setValues() — call it with the result of getProfile() to pre-fill the form"
+    form.includes("onSubmit"),
+    "The <form> element does not have an onSubmit prop — attach handleSubmit here, not to the button's onClick"
   );
 });
 
-test("ProfileForm declares an isLoadingProfile state variable", () => {
+test("Save button is disabled when isSubmitting is true", () => {
   assert(
-    form.includes("isLoadingProfile") || form.includes("isLoading"),
-    "ProfileForm.tsx does not declare an isLoadingProfile state variable"
+    form.includes("isSubmitting"),
+    "The Save button's disabled prop does not include isSubmitting"
   );
 });
 
-test("ProfileForm shows a loading state while the profile is being fetched", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-07.behavior.test.tsx");
+test("Button label changes while submitting", () => {
+  assert(
+    form.includes("Saving") || form.includes("saving"),
+    "The button does not show a different label while submitting — expected something like: isSubmitting ? 'Saving…' : 'Save'"
+  );
+});
+
+test("setIsSubmitting(false) is called in the finally block", () => {
+  assert(
+    form.includes("finally") && form.includes("setIsSubmitting(false)"),
+    "handleSubmit does not call setIsSubmitting(false) in a finally block — the button will stay disabled after an error"
+  );
+});
+
+test("Form submission shows loading state and success message", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-06.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 

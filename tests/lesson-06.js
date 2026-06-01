@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 06: Form Submission\n");
+console.log("\nLesson 05: The useFormWithValidation Hook\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -51,69 +51,74 @@ if (!built.ok) {
 console.log("✅ App builds and runs without errors\n");
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
+const hook = normalize(read("src/hooks/useFormWithValidation.ts"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("ProfileForm imports saveProfile from the API", () => {
+test("useFormWithValidation.ts exists", () => {
+  assert(hook !== null, "src/hooks/useFormWithValidation.ts not found");
+});
+
+test("ProfileForm imports useFormWithValidation", () => {
   assert(
-    form.includes("saveProfile"),
-    'ProfileForm.tsx does not import "saveProfile" from ../../utils/api'
+    form.includes("useFormWithValidation"),
+    'ProfileForm.tsx does not import "useFormWithValidation"'
   );
 });
 
-test("ProfileForm declares isSubmitting state", () => {
+test("ProfileForm destructures errors from the hook", () => {
   assert(
-    form.includes("isSubmitting"),
-    "ProfileForm.tsx does not declare isSubmitting state"
+    form.includes("errors"),
+    "ProfileForm.tsx does not destructure errors from useFormWithValidation"
   );
 });
 
-test("ProfileForm defines a handleSubmit function", () => {
+test("ProfileForm destructures isValid from the hook", () => {
   assert(
-    form.includes("handleSubmit"),
-    "ProfileForm.tsx does not define a handleSubmit function"
+    form.includes("isValid"),
+    "ProfileForm.tsx does not destructure isValid from useFormWithValidation"
   );
 });
 
-test("handleSubmit calls e.preventDefault()", () => {
+test("ProfileForm renders an error span for the name field", () => {
   assert(
-    form.includes("preventDefault"),
-    "handleSubmit does not call e.preventDefault() — without it the browser reloads on submit"
+    form.includes("errors.name"),
+    "ProfileForm.tsx does not conditionally render errors.name below the name input"
   );
 });
 
-test("The form element uses onSubmit", () => {
+test("ProfileForm renders an error span for the email field", () => {
   assert(
-    form.includes("onSubmit"),
-    "The <form> element does not have an onSubmit prop — attach handleSubmit here, not to the button's onClick"
+    form.includes("errors.email"),
+    "ProfileForm.tsx does not conditionally render errors.email below the email input"
   );
 });
 
-test("Save button is disabled when isSubmitting is true", () => {
+test("Save button has disabled={!isValid}", () => {
   assert(
-    form.includes("isSubmitting"),
-    "The Save button's disabled prop does not include isSubmitting"
+    form.includes("!isValid"),
+    "The Save button does not use !isValid in its disabled prop"
   );
 });
 
-test("Button label changes while submitting", () => {
+test("useFormWithValidation reads validationMessage from the input", () => {
   assert(
-    form.includes("Saving") || form.includes("saving"),
-    "The button does not show a different label while submitting — expected something like: isSubmitting ? 'Saving…' : 'Save'"
+    hook.includes("validationMessage"),
+    "useFormWithValidation.ts does not read validationMessage — it should store the browser's validation message in errors"
   );
 });
 
-test("setIsSubmitting(false) is called in the finally block", () => {
+test("useFormWithValidation calls checkValidity on the form", () => {
   assert(
-    form.includes("finally") && form.includes("setIsSubmitting(false)"),
-    "handleSubmit does not call setIsSubmitting(false) in a finally block — the button will stay disabled after an error"
+    hook.includes("checkValidity"),
+    "useFormWithValidation.ts does not call checkValidity() — it needs this to set isValid correctly"
   );
 });
 
-test("Form submission shows loading state and success message", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-06.behavior.test.tsx");
+test("Save button is disabled initially and enabled once all fields are valid", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-05.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 

@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 02: Multiple Inputs with One Handler\n");
+console.log("\nLesson 01: Controlled Inputs\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -56,50 +56,43 @@ test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("ProfileForm uses a single state object containing both name and email", () => {
+test("ProfileForm imports useState", () => {
   assert(
-    form.includes("name:") && form.includes("email:"),
-    "ProfileForm.tsx does not use a state object with name and email keys — expected useState({ name: '', email: '' })"
+    form.includes("useState"),
+    'ProfileForm.tsx does not import "useState" from React'
   );
 });
 
-test("ProfileForm defines a single handleChange function", () => {
+test("ProfileForm declares a state variable for the name field", () => {
   assert(
-    form.includes("handleChange"),
-    "ProfileForm.tsx does not define a handleChange function"
+    form.includes("useState(") && form.includes("name"),
+    "ProfileForm.tsx does not declare a useState variable for the name field"
   );
 });
 
-test("handleChange uses e.target.name to identify the field", () => {
+test("The name input has a value prop", () => {
   assert(
-    form.includes("e.target.name") || form.includes("target.name"),
-    "handleChange does not read e.target.name — it needs this to update the correct field"
+    form.includes('value={'),
+    "The name input does not have a value prop — it needs value={name} to become a controlled input"
   );
 });
 
-test("handleChange uses a computed property key to update state", () => {
+test("The name input has an onChange handler", () => {
   assert(
-    form.includes("[e.target.name]") || form.includes("[name]"),
-    "handleChange does not use a computed property key — expected [e.target.name]: e.target.value or [name]: value"
+    form.includes("onChange"),
+    "The name input does not have an onChange handler — without it React locks the input"
   );
 });
 
-test("The name input has a name attribute", () => {
+test("onChange calls the state setter with e.target.value", () => {
   assert(
-    form.includes('name="name"'),
-    'The name input is missing name="name" — the name attribute must match the state object key exactly'
+    form.includes("e.target.value"),
+    "onChange does not use e.target.value to update state"
   );
 });
 
-test("The email input has a name attribute", () => {
-  assert(
-    form.includes('name="email"'),
-    'The email input is missing name="email" — the name attribute must match the state object key exactly'
-  );
-});
-
-test("Both inputs update independently when typed into", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-02.behavior.test.tsx");
+test("Controlled name input updates its displayed value when typed into", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-01.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 

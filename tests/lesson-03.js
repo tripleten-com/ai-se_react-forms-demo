@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 03: The useForm Hook\n");
+console.log("\nLesson 02: Multiple Inputs with One Handler\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -51,60 +51,55 @@ if (!built.ok) {
 console.log("✅ App builds and runs without errors\n");
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
-const hook = normalize(read("src/hooks/useForm.ts"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("useForm.ts exists", () => {
-  assert(hook !== null, "src/hooks/useForm.ts not found");
-});
-
-test("ProfileForm imports useForm", () => {
+test("ProfileForm uses a single state object containing both name and email", () => {
   assert(
-    form.includes("useForm"),
-    'ProfileForm.tsx does not import "useForm"'
+    form.includes("name:") && form.includes("email:"),
+    "ProfileForm.tsx does not use a state object with name and email keys — expected useState({ name: '', email: '' })"
   );
 });
 
-test("ProfileForm calls useForm with default values", () => {
+test("ProfileForm defines a single handleChange function", () => {
   assert(
-    form.includes("useForm("),
-    "ProfileForm.tsx does not call useForm() — replace the manual state with a useForm call"
+    form.includes("handleChange"),
+    "ProfileForm.tsx does not define a handleChange function"
   );
 });
 
-test("ProfileForm destructures values from useForm", () => {
+test("handleChange uses e.target.name to identify the field", () => {
   assert(
-    form.includes("values"),
-    "ProfileForm.tsx does not destructure values from useForm"
+    form.includes("e.target.name") || form.includes("target.name"),
+    "handleChange does not read e.target.name — it needs this to update the correct field"
   );
 });
 
-test("ProfileForm uses values.name for the name input", () => {
+test("handleChange uses a computed property key to update state", () => {
   assert(
-    form.includes("values.name"),
-    "ProfileForm.tsx does not use values.name for the name input's value prop"
+    form.includes("[e.target.name]") || form.includes("[name]"),
+    "handleChange does not use a computed property key — expected [e.target.name]: e.target.value or [name]: value"
   );
 });
 
-test("ProfileForm uses values.email for the email input", () => {
+test("The name input has a name attribute", () => {
   assert(
-    form.includes("values.email"),
-    "ProfileForm.tsx does not use values.email for the email input's value prop"
+    form.includes('name="name"'),
+    'The name input is missing name="name" — the name attribute must match the state object key exactly'
   );
 });
 
-test("useForm exports a handleChange that uses e.target.name", () => {
+test("The email input has a name attribute", () => {
   assert(
-    hook.includes("e.target.name") || hook.includes("target.name"),
-    "useForm.ts handleChange does not read e.target.name"
+    form.includes('name="email"'),
+    'The email input is missing name="email" — the name attribute must match the state object key exactly'
   );
 });
 
-test("Both fields update correctly after refactoring to useForm", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-03.behavior.test.tsx");
+test("Both inputs update independently when typed into", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-02.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 

@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 01: Controlled Inputs\n");
+console.log("\nLesson 07: Pre-Filling Fields from Data\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -56,43 +56,50 @@ test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("ProfileForm imports useState", () => {
+test("ProfileForm imports getProfile from the API", () => {
   assert(
-    form.includes("useState"),
-    'ProfileForm.tsx does not import "useState" from React'
+    form.includes("getProfile"),
+    'ProfileForm.tsx does not import "getProfile" from ../../utils/api'
   );
 });
 
-test("ProfileForm declares a state variable for the name field", () => {
+test("ProfileForm imports useEffect", () => {
   assert(
-    form.includes("useState(") && form.includes("name"),
-    "ProfileForm.tsx does not declare a useState variable for the name field"
+    form.includes("useEffect"),
+    'ProfileForm.tsx does not import "useEffect" from React'
   );
 });
 
-test("The name input has a value prop", () => {
+test("ProfileForm has a useEffect call", () => {
   assert(
-    form.includes('value={'),
-    "The name input does not have a value prop — it needs value={name} to become a controlled input"
+    form.includes("useEffect("),
+    "ProfileForm.tsx does not call useEffect"
   );
 });
 
-test("The name input has an onChange handler", () => {
+test("The useEffect calls getProfile", () => {
   assert(
-    form.includes("onChange"),
-    "The name input does not have an onChange handler — without it React locks the input"
+    form.includes("getProfile("),
+    "The useEffect does not call getProfile() — this is how the stored profile is read on mount"
   );
 });
 
-test("onChange calls the state setter with e.target.value", () => {
+test("The useEffect calls setValues with the profile data", () => {
   assert(
-    form.includes("e.target.value"),
-    "onChange does not use e.target.value to update state"
+    form.includes("setValues("),
+    "The useEffect does not call setValues() — call it with the result of getProfile() to pre-fill the form"
   );
 });
 
-test("Controlled name input updates its displayed value when typed into", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-01.behavior.test.tsx");
+test("ProfileForm declares an isLoadingProfile state variable", () => {
+  assert(
+    form.includes("isLoadingProfile") || form.includes("isLoading"),
+    "ProfileForm.tsx does not declare an isLoadingProfile state variable"
+  );
+});
+
+test("ProfileForm shows a loading state while the profile is being fetched", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-07.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 

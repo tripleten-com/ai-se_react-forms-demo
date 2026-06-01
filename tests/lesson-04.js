@@ -1,7 +1,12 @@
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { checkCompiles, checkBuilds, checkBehavior, normalize } from "./lib/utils.js";
+import {
+  checkCompiles,
+  checkBuilds,
+  checkBehavior,
+  normalize,
+} from "./lib/utils.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -32,11 +37,13 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 04: HTML5 Validation Attributes\n");
+console.log("\nLesson 03: The useForm Hook\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
-  console.log("❌ TypeScript compilation failed — fix all type errors before running tests\n");
+  console.log(
+    "❌ TypeScript compilation failed — fix all type errors before running tests\n",
+  );
   console.log(compiled.output);
   process.exit(1);
 }
@@ -51,41 +58,59 @@ if (!built.ok) {
 console.log("✅ App builds and runs without errors\n");
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
+const hook = normalize(read("src/hooks/useForm.ts"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
-test("Name input has the required attribute", () => {
+test("useForm.ts exists", () => {
+  assert(hook !== null, "src/hooks/useForm.ts not found");
+});
+
+test("ProfileForm imports useForm", () => {
+  assert(form.includes("useForm"), 'ProfileForm.tsx does not import "useForm"');
+});
+
+test("ProfileForm calls useForm with default values", () => {
   assert(
-    form.includes("required"),
-    "ProfileForm.tsx does not include the required attribute on the name input"
+    form.includes("useForm("),
+    "ProfileForm.tsx does not call useForm() — replace the manual state with a useForm call",
   );
 });
 
-test("Name input has minLength set to 2", () => {
+test("ProfileForm destructures values from useForm", () => {
   assert(
-    form.includes("minLength={2}") || form.includes('minLength="2"'),
-    "The name input does not have minLength={2}"
+    form.includes("values"),
+    "ProfileForm.tsx does not destructure values from useForm",
   );
 });
 
-test("Name input has maxLength set to 40", () => {
+test("ProfileForm uses values.name for the name input", () => {
   assert(
-    form.includes("maxLength={40}") || form.includes('maxLength="40"'),
-    "The name input does not have maxLength={40}"
+    form.includes("values.name"),
+    "ProfileForm.tsx does not use values.name for the name input's value prop",
   );
 });
 
-test("Email input has type='email'", () => {
+test("ProfileForm uses values.email for the email input", () => {
   assert(
-    form.includes('type="email"'),
-    'The email input does not have type="email"'
+    form.includes("values.email"),
+    "ProfileForm.tsx does not use values.email for the email input's value prop",
   );
 });
 
-test("Validation attributes are present in the rendered DOM", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-04.behavior.test.tsx");
+test("useForm exports a handleChange that uses e.target.name", () => {
+  assert(
+    hook.includes("e.target.name") ||
+      hook.includes("target.name") ||
+      hook.includes("{ name, value } = event.target"),
+    "useForm.ts handleChange does not read e.target.name",
+  );
+});
+
+test("Both fields update correctly after refactoring to useForm", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-03.behavior.test.tsx");
   assert(result.ok, "Behavioral tests failed — run `npm test` for details");
 });
 
