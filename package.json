@@ -6,17 +6,30 @@
   "scripts": {
     "dev": "vite --open",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:l1": "node tests/lesson-01.js",
+    "test:l2": "node tests/lesson-02.js",
+    "test:l3": "node tests/lesson-03.js",
+    "test:l4": "node tests/lesson-04.js",
+    "test:l5": "node tests/lesson-05.js",
+    "test:l6": "node tests/lesson-06.js",
+    "test:l7": "node tests/lesson-07.js"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "^25.0.0",
     "typescript": "^5.5.3",
-    "vite": "^5.4.2"
+    "vite": "^5.4.2",
+    "vitest": "^2.1.0"
   }
 }
