@@ -1,0 +1,88 @@
+.profile-form {
+  background: rgb(255 255 255);
+  border-radius: 16px;
+  box-shadow: 0 0 0.5px 0 rgb(0 0 0 / 0.3), 0 1px 3px 0 rgb(0 0 0 / 0.15);
+  padding: 40px;
+  width: 100%;
+  max-width: 640px;
+}
+
+.profile-form__title {
+  font-family: 'Space Grotesk', Arial, Helvetica, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: rgb(26 26 26);
+  margin-bottom: 32px;
+}
+
+.profile-form__field {
+  margin-bottom: 20px;
+}
+
+.profile-form__label {
+  display: block;
+  font-size: 14px;
+  color: rgb(0 0 0 / 0.5);
+  margin-bottom: 8px;
+  cursor: default;
+}
+
+.profile-form__input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid rgb(0 0 0 / 0.14);
+  border-radius: 10px;
+  font-size: 16px;
+  color: rgb(26 26 26);
+  background: rgb(255 255 255);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.profile-form__input:focus {
+  border-color: rgb(24 120 220 / 0.6);
+}
+
+.profile-form__input::placeholder {
+  color: rgb(0 0 0 / 0.3);
+}
+
+.profile-form__error {
+  display: block;
+  font-size: 14px;
+  color: rgb(222 76 69);
+  margin-top: 4px;
+}
+
+.profile-form__save-btn {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background: rgb(26 26 26);
+  color: rgb(255 255 255);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.profile-form__save-btn:hover:not(:disabled) {
+  background: rgb(50 50 50);
+}
+
+.profile-form__save-btn:disabled {
+  background: rgb(0 0 0 / 0.2);
+  cursor: not-allowed;
+}
+
+.profile-form__feedback {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.profile-form__feedback_type_success {
+  color: rgb(50 143 81);
+}
+
+.profile-form__feedback_type_error {
+  color: rgb(222 76 69);
+}
