@@ -100,7 +100,7 @@ test("The email input has a name attribute", () => {
 
 test("Both inputs update independently when typed into", () => {
   const result = checkBehavior(root, "tests/lib/lesson-02.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-02.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

@@ -100,7 +100,7 @@ test("ProfileForm declares an isLoadingProfile state variable", () => {
 
 test("ProfileForm shows a loading state while the profile is being fetched", () => {
   const result = checkBehavior(root, "tests/lib/lesson-07.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-07.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

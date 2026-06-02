@@ -93,7 +93,7 @@ test("onChange calls the state setter with e.target.value", () => {
 
 test("Controlled name input updates its displayed value when typed into", () => {
   const result = checkBehavior(root, "tests/lib/lesson-01.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-01.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

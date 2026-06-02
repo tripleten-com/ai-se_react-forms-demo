@@ -114,7 +114,7 @@ test("setIsSubmitting(false) is called in the finally block", () => {
 
 test("Form submission shows loading state and success message", () => {
   const result = checkBehavior(root, "tests/lib/lesson-06.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-06.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

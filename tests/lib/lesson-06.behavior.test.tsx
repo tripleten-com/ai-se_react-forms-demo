@@ -9,18 +9,10 @@ vi.mock("../../src/utils/api", () => ({
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
-<<<<<<< Updated upstream
 async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByLabelText(/name/i), "Alice");
-  await user.type(screen.getByLabelText(/email/i), "alice@example.com");
+  await user.type(await screen.findByLabelText(/name/i), "Alice");
+  await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 }
-=======
-describe("Lesson 05 — useFormWithValidation", () => {
-  it("Save button is disabled before the user has touched any field", async () => {
-    render(<ProfileForm />);
-    expect(await screen.findByRole("button", { name: /save/i })).toBeDisabled();
-  });
->>>>>>> Stashed changes
 
 describe("Lesson 06 — form submission", () => {
   it("Save button is disabled while the request is in flight", async () => {
@@ -31,13 +23,8 @@ describe("Lesson 06 — form submission", () => {
     render(<ProfileForm />);
     await fillValidForm(user);
 
-<<<<<<< Updated upstream
     const saveButton = screen.getByRole("button", { name: /save/i });
     user.click(saveButton);
-=======
-    await user.type(await screen.findByLabelText(/name/i), "Alice");
-    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
->>>>>>> Stashed changes
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: /saving/i })).toBeDisabled()
@@ -52,11 +39,7 @@ describe("Lesson 06 — form submission", () => {
     render(<ProfileForm />);
     await fillValidForm(user);
 
-<<<<<<< Updated upstream
     user.click(screen.getByRole("button", { name: /save/i }));
-=======
-    await user.type(await screen.findByLabelText(/name/i), "Alice");
->>>>>>> Stashed changes
 
     await waitFor(() =>
       expect(
@@ -71,14 +54,7 @@ describe("Lesson 06 — form submission", () => {
     render(<ProfileForm />);
     await fillValidForm(user);
 
-<<<<<<< Updated upstream
     await user.click(screen.getByRole("button", { name: /save/i }));
-=======
-    const nameInput = await screen.findByLabelText(/name/i);
-    await user.type(nameInput, "A");
-    await user.clear(nameInput);
-    await user.type(nameInput, "A");
->>>>>>> Stashed changes
 
     await waitFor(() =>
       expect(

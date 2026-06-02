@@ -86,7 +86,7 @@ test("Email input has type='email'", () => {
 
 test("Validation attributes are present in the rendered DOM", () => {
   const result = checkBehavior(root, "tests/lib/lesson-04.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-04.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

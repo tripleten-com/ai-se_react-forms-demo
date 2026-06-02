@@ -111,7 +111,7 @@ test("useForm exports a handleChange that uses e.target.name", () => {
 
 test("Both fields update correctly after refactoring to useForm", () => {
   const result = checkBehavior(root, "tests/lib/lesson-03.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test` for details");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-03.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);

@@ -4,22 +4,22 @@ import { describe, it, expect, vi } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 
 vi.mock("../../src/utils/api", () => ({
-  getProfile: vi.fn(() => ({ name: "", email: "" })),
+  getProfile: vi.fn(() => Promise.resolve({ name: "", email: "" })),
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
 describe("Lesson 05 — useFormWithValidation", () => {
-  it("Save button is disabled before the user has touched any field", () => {
+  it("Save button is disabled before the user has touched any field", async () => {
     render(<ProfileForm />);
-    expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: /save/i })).toBeDisabled();
   });
 
   it("Save button becomes enabled when name and email are both valid", async () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(screen.getByLabelText(/name/i), "Alice");
-    await user.type(screen.getByLabelText(/email/i), "alice@example.com");
+    await user.type(await screen.findByLabelText(/name/i), "Alice");
+    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 
     expect(screen.getByRole("button", { name: /save/i })).not.toBeDisabled();
   });
@@ -28,7 +28,7 @@ describe("Lesson 05 — useFormWithValidation", () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(screen.getByLabelText(/name/i), "Alice");
+    await user.type(await screen.findByLabelText(/name/i), "Alice");
 
     expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
   });
@@ -37,7 +37,7 @@ describe("Lesson 05 — useFormWithValidation", () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    const nameInput = screen.getByLabelText(/name/i);
+    const nameInput = await screen.findByLabelText(/name/i);
     await user.type(nameInput, "A");
     await user.clear(nameInput);
     await user.type(nameInput, "A");
