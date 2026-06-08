@@ -37,7 +37,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 03: The useForm Hook\n");
+console.log("\nLesson 04: The useForm Hook\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -110,9 +110,13 @@ test("useForm exports a handleChange that uses e.target.name", () => {
 });
 
 test("Both fields update correctly after refactoring to useForm", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-03.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-03.behavior.test.tsx` for details");
+  const result = checkBehavior(root, "tests/lib/lesson-04.behavior.test.tsx");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-04.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);
+if (fail === 0) {
+  const code = Buffer.from("ZmN2eG9xa3Y=", "base64").toString();
+  console.log(`\nVerification code: ${code}`);
+}
 if (fail > 0) process.exit(1);

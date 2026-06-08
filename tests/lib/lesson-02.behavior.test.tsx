@@ -4,44 +4,31 @@ import { describe, it, expect, vi } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 
 vi.mock("../../src/utils/api", () => ({
-  getProfile: vi.fn(() => Promise.resolve({ name: "", email: "" })),
+  getProfile: vi.fn(() => ({ name: "", email: "" })),
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
-describe("Lesson 02 — multiple inputs with one handler", () => {
-  it("typing in the name field updates its value", async () => {
+describe("Lesson 02 — controlled name input", () => {
+  it("typing in the name field updates its displayed value", async () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(await screen.findByLabelText(/name/i), "Alice");
+    const nameInput = screen.getByLabelText(/name/i);
+    await user.type(nameInput, "Alice");
 
-    expect(screen.getByLabelText(/name/i)).toHaveValue("Alice");
+    expect(nameInput).toHaveValue("Alice");
   });
 
-  it("typing in the email field updates its value", async () => {
+  it("each additional character is reflected in the input", async () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
+    const nameInput = screen.getByLabelText(/name/i);
+    await user.type(nameInput, "Hi");
 
-    expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
-  });
+    expect(nameInput).toHaveValue("Hi");
 
-  it("typing in name does not affect the email field", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm />);
-
-    await user.type(await screen.findByLabelText(/name/i), "Alice");
-
-    expect(screen.getByLabelText(/email/i)).toHaveValue("");
-  });
-
-  it("typing in email does not affect the name field", async () => {
-    const user = userEvent.setup();
-    render(<ProfileForm />);
-
-    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
-
-    expect(screen.getByLabelText(/name/i)).toHaveValue("");
+    await user.type(nameInput, "!");
+    expect(nameInput).toHaveValue("Hi!");
   });
 });

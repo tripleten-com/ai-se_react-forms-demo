@@ -8,6 +8,33 @@ vi.mock("../../src/utils/api", () => ({
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
+describe("Lesson 05 — HTML5 validation attributes", () => {
+  it("name input is required", async () => {
+    render(<ProfileForm />);
+    expect(await screen.findByLabelText(/name/i)).toBeRequired();
+  });
+
+  it("name input has a minLength of 2", async () => {
+    render(<ProfileForm />);
+    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("minLength", "2");
+  });
+
+  it("name input has a maxLength of 40", async () => {
+    render(<ProfileForm />);
+    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("maxLength", "40");
+  });
+
+  it("email input has type='email'", async () => {
+    render(<ProfileForm />);
+    expect(await screen.findByLabelText(/email/i)).toHaveAttribute("type", "email");
+  });
+
+  it("email input is required", async () => {
+    render(<ProfileForm />);
+    expect(await screen.findByLabelText(/email/i)).toBeRequired();
+  });
+});
+
 describe("Lesson 05 — useFormWithValidation", () => {
   it("Save button is disabled before the user has touched any field", async () => {
     render(<ProfileForm />);

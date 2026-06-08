@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 01: Controlled Inputs\n");
+console.log("\nLesson 02: Controlled Inputs\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -92,9 +92,13 @@ test("onChange calls the state setter with e.target.value", () => {
 });
 
 test("Controlled name input updates its displayed value when typed into", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-01.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-01.behavior.test.tsx` for details");
+  const result = checkBehavior(root, "tests/lib/lesson-02.behavior.test.tsx");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-02.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);
+if (fail === 0) {
+  const code = Buffer.from("M205ZHp6b2Q=", "base64").toString();
+  console.log(`\nVerification code: ${code}`);
+}
 if (fail > 0) process.exit(1);

@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 02: Multiple Inputs with One Handler\n");
+console.log("\nLesson 03: Multiple Inputs with One Handler\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -99,9 +99,13 @@ test("The email input has a name attribute", () => {
 });
 
 test("Both inputs update independently when typed into", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-02.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-02.behavior.test.tsx` for details");
+  const result = checkBehavior(root, "tests/lib/lesson-03.behavior.test.tsx");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-03.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);
+if (fail === 0) {
+  const code = Buffer.from("cXFkYXFxdTc=", "base64").toString();
+  console.log(`\nVerification code: ${code}`);
+}
 if (fail > 0) process.exit(1);

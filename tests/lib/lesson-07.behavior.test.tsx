@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 import * as api from "../../src/utils/api";
 
@@ -9,6 +9,10 @@ vi.mock("../../src/utils/api", () => ({
 }));
 
 describe("Lesson 07 — pre-filling fields from data", () => {
+  beforeEach(() => {
+    vi.mocked(api.getProfile).mockResolvedValue({ name: "", email: "" });
+  });
+
   it("shows a loading state before the profile data arrives", () => {
     // A never-resolving Promise keeps isLoadingProfile true so act() can't flush it away
     vi.mocked(api.getProfile).mockImplementation(() => new Promise(() => {}));

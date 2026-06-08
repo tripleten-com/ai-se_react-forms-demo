@@ -32,7 +32,7 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
-console.log("\nLesson 04: HTML5 Validation Attributes\n");
+console.log("\nLesson 05: The useFormWithValidation Hook\n");
 
 const compiled = checkCompiles(root);
 if (!compiled.ok) {
@@ -51,6 +51,7 @@ if (!built.ok) {
 console.log("✅ App builds and runs without errors\n");
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
+const hook = normalize(read("src/hooks/useFormWithValidation.ts"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
@@ -84,10 +85,74 @@ test("Email input has type='email'", () => {
   );
 });
 
-test("Validation attributes are present in the rendered DOM", () => {
-  const result = checkBehavior(root, "tests/lib/lesson-04.behavior.test.tsx");
-  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-04.behavior.test.tsx` for details");
+test("useFormWithValidation.ts exists", () => {
+  assert(hook !== null, "src/hooks/useFormWithValidation.ts not found");
+});
+
+test("ProfileForm imports useFormWithValidation", () => {
+  assert(
+    form.includes("useFormWithValidation"),
+    'ProfileForm.tsx does not import "useFormWithValidation"'
+  );
+});
+
+test("ProfileForm destructures errors from the hook", () => {
+  assert(
+    form.includes("errors"),
+    "ProfileForm.tsx does not destructure errors from useFormWithValidation"
+  );
+});
+
+test("ProfileForm destructures isValid from the hook", () => {
+  assert(
+    form.includes("isValid"),
+    "ProfileForm.tsx does not destructure isValid from useFormWithValidation"
+  );
+});
+
+test("ProfileForm renders an error span for the name field", () => {
+  assert(
+    form.includes("errors.name"),
+    "ProfileForm.tsx does not conditionally render errors.name below the name input"
+  );
+});
+
+test("ProfileForm renders an error span for the email field", () => {
+  assert(
+    form.includes("errors.email"),
+    "ProfileForm.tsx does not conditionally render errors.email below the email input"
+  );
+});
+
+test("Save button has disabled={!isValid}", () => {
+  assert(
+    form.includes("!isValid"),
+    "The Save button does not use !isValid in its disabled prop"
+  );
+});
+
+test("useFormWithValidation reads validationMessage from the input", () => {
+  assert(
+    hook.includes("validationMessage"),
+    "useFormWithValidation.ts does not read validationMessage — it should store the browser's validation message in errors"
+  );
+});
+
+test("useFormWithValidation calls checkValidity on the form", () => {
+  assert(
+    hook.includes("checkValidity"),
+    "useFormWithValidation.ts does not call checkValidity() — it needs this to set isValid correctly"
+  );
+});
+
+test("Validation attributes and hook wiring are correct", () => {
+  const result = checkBehavior(root, "tests/lib/lesson-05.behavior.test.tsx");
+  assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-05.behavior.test.tsx` for details");
 });
 
 console.log(`\n${pass} passed, ${fail} failed`);
+if (fail === 0) {
+  const code = Buffer.from("MmM3M21pa3k=", "base64").toString();
+  console.log(`\nVerification code: ${code}`);
+}
 if (fail > 0) process.exit(1);
