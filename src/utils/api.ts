@@ -12,7 +12,7 @@ export function getProfile(): Promise<Profile> {
       resolve(
         stored ? (JSON.parse(stored) as Profile) : { name: "", email: "" },
       );
-    }, 2000);
+    }, 600);
   });
 }
 
