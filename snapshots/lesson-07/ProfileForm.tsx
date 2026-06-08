@@ -1,14 +1,53 @@
+import { useState, useEffect } from "react";
 import { useFormWithValidation } from "../../hooks/useFormWithValidation";
+import { saveProfile, getProfile } from "../../utils/api";
 import "./ProfileForm.css";
 
 export default function ProfileForm() {
-  const { values, handleChange, errors, isValid } = useFormWithValidation({
-    name: "",
-    email: "",
-  });
+  const { values, handleChange, errors, isValid, setValues } =
+    useFormWithValidation({
+      name: "",
+      email: "",
+    });
 
-  return (
-    <form className="profile-form">
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getProfile();
+        setValues(data);
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+    load();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setIsSubmitting(true);
+    setSubmitSuccess(false);
+    setSubmitError(null);
+
+    try {
+      await saveProfile(values);
+      setSubmitSuccess(true);
+    } catch {
+      setSubmitError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return isLoadingProfile ? (
+    <p>Loading...</p>
+  ) : (
+    <form className="profile-form" onSubmit={handleSubmit}>
       <h1 className="profile-form__title">Your Profile</h1>
 
       <div className="profile-form__field">
@@ -54,10 +93,14 @@ export default function ProfileForm() {
       <button
         className="profile-form__save-btn"
         type="submit"
-        disabled={!isValid}
+        disabled={!isValid || isSubmitting}
       >
-        Save
+        {isSubmitting ? "Saving..." : "Save"}
       </button>
+      {submitError && (
+        <span className="profile-form__error">{submitError}</span>
+      )}
+      {submitSuccess && <span>Submission successful</span>}
     </form>
   );
 }
