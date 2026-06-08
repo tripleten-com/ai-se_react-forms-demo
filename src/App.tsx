@@ -1,5 +1,5 @@
-import ProfileForm from './components/ProfileForm/ProfileForm';
-import './App.css';
+import ProfileForm from "./components/ProfileForm/ProfileForm";
+import "./App.css";
 
 function App() {
   return (
