@@ -8,26 +8,40 @@ vi.mock("../../src/utils/api", () => ({
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
-describe("Lesson 03 — useForm hook", () => {
-  it("both fields still update correctly after refactoring to useForm", async () => {
+describe("Lesson 03 — multiple inputs with one handler", () => {
+  it("typing in the name field updates its value", async () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
     await user.type(await screen.findByLabelText(/name/i), "Alice");
-    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 
     expect(screen.getByLabelText(/name/i)).toHaveValue("Alice");
-    expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
   });
 
-  it("clearing a field via backspace reduces its value", async () => {
+  it("typing in the email field updates its value", async () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    const nameInput = await screen.findByLabelText(/name/i);
-    await user.type(nameInput, "Hi");
-    await user.type(nameInput, "{backspace}");
+    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
 
-    expect(nameInput).toHaveValue("H");
+    expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
+  });
+
+  it("typing in name does not affect the email field", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm />);
+
+    await user.type(await screen.findByLabelText(/name/i), "Alice");
+
+    expect(screen.getByLabelText(/email/i)).toHaveValue("");
+  });
+
+  it("typing in email does not affect the name field", async () => {
+    const user = userEvent.setup();
+    render(<ProfileForm />);
+
+    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
+
+    expect(screen.getByLabelText(/name/i)).toHaveValue("");
   });
 });

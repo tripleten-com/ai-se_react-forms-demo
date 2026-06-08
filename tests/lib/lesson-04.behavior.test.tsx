@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import ProfileForm from "../../src/components/ProfileForm/ProfileForm";
 
@@ -7,29 +8,26 @@ vi.mock("../../src/utils/api", () => ({
   saveProfile: vi.fn(() => Promise.resolve()),
 }));
 
-describe("Lesson 04 — HTML5 validation attributes", () => {
-  it("name input is required", async () => {
+describe("Lesson 04 — useForm hook", () => {
+  it("both fields still update correctly after refactoring to useForm", async () => {
+    const user = userEvent.setup();
     render(<ProfileForm />);
-    expect(await screen.findByLabelText(/name/i)).toBeRequired();
+
+    await user.type(await screen.findByLabelText(/name/i), "Alice");
+    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
+
+    expect(screen.getByLabelText(/name/i)).toHaveValue("Alice");
+    expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
   });
 
-  it("name input has a minLength of 2", async () => {
+  it("clearing a field via backspace reduces its value", async () => {
+    const user = userEvent.setup();
     render(<ProfileForm />);
-    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("minLength", "2");
-  });
 
-  it("name input has a maxLength of 40", async () => {
-    render(<ProfileForm />);
-    expect(await screen.findByLabelText(/name/i)).toHaveAttribute("maxLength", "40");
-  });
+    const nameInput = await screen.findByLabelText(/name/i);
+    await user.type(nameInput, "Hi");
+    await user.type(nameInput, "{backspace}");
 
-  it("email input has type='email'", async () => {
-    render(<ProfileForm />);
-    expect(await screen.findByLabelText(/email/i)).toHaveAttribute("type", "email");
-  });
-
-  it("email input is required", async () => {
-    render(<ProfileForm />);
-    expect(await screen.findByLabelText(/email/i)).toBeRequired();
+    expect(nameInput).toHaveValue("H");
   });
 });
