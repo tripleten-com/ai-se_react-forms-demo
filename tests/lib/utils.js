@@ -12,13 +12,21 @@ export function normalize(content) {
 
 /**
  * Type-checks the app with TypeScript.
+ *
+ * Unused-code checks (noUnusedLocals / noUnusedParameters) are disabled here
+ * because editors may surface them as faded "warning"-style hints rather than
+ * red errors, and students shouldn't fail the check for leftover unused
+ * variables. Real type errors (red squiggles) still fail.
  */
 export function checkCompiles(root) {
   try {
-    execSync("npx tsc -p tsconfig.app.json --noEmit", {
-      cwd: root,
-      stdio: "pipe",
-    });
+    execSync(
+      "npx tsc -p tsconfig.app.json --noEmit --noUnusedLocals false --noUnusedParameters false",
+      {
+        cwd: root,
+        stdio: "pipe",
+      },
+    );
     return { ok: true, output: "" };
   } catch (err) {
     const output =
