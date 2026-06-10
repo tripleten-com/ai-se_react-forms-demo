@@ -2,8 +2,10 @@ import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import {
-  checkCompiles,
-  checkBuilds,
+  runGates,
+  test,
+  assert,
+  summary,
   checkBehavior,
   normalize,
 } from "./lib/utils.js";
@@ -19,43 +21,9 @@ function read(relPath) {
   }
 }
 
-let pass = 0;
-let fail = 0;
-
-function test(label, fn) {
-  try {
-    fn();
-    console.log(`✅ ${label}`);
-    pass++;
-  } catch (err) {
-    console.log(`❌ ${label} — ${err.message}`);
-    fail++;
-  }
-}
-
-function assert(condition, message) {
-  if (!condition) throw new Error(message);
-}
-
 console.log("\nLesson 04: The useForm Hook\n");
 
-const compiled = checkCompiles(root);
-if (!compiled.ok) {
-  console.log(
-    "❌ TypeScript compilation failed — fix all type errors before running tests\n",
-  );
-  console.log(compiled.output);
-  process.exit(1);
-}
-console.log("✅ Project compiles without type errors");
-
-const built = checkBuilds(root);
-if (!built.ok) {
-  console.log("❌ Vite build failed — the app does not run without errors\n");
-  console.log(built.output);
-  process.exit(1);
-}
-console.log("✅ App builds and runs without errors\n");
+runGates(root);
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
 const hook = normalize(read("src/hooks/useForm.ts"));
@@ -114,9 +82,4 @@ test("Both fields update correctly after refactoring to useForm", () => {
   assert(result.ok, "Behavioral tests failed — run `npm test -- tests/lib/lesson-04.behavior.test.tsx` for details");
 });
 
-console.log(`\n${pass} passed, ${fail} failed`);
-if (fail === 0) {
-  const code = Buffer.from("ZmN2eG9xa3Y=", "base64").toString();
-  console.log(`\nVerification code: ${code}`);
-}
-if (fail > 0) process.exit(1);
+summary("ZmN2eG9xa3Y=");
