@@ -1,4 +1,4 @@
-@import './vendor/normalize.css';
+@import "./vendor/normalize.css";
 
 *,
 *::before,
@@ -39,7 +39,7 @@ button {
 
 button,
 label,
-input[type='checkbox'],
-input[type='radio'] {
+input[type="checkbox"],
+input[type="radio"] {
   cursor: pointer;
 }
