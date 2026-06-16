@@ -25,7 +25,7 @@ export default function ProfileForm() {
       }
     };
     load();
-  }, []);
+  }, [setValues]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,7 +100,9 @@ export default function ProfileForm() {
       {submitError && (
         <span className="profile-form__error">{submitError}</span>
       )}
-      {submitSuccess && <span>Submission successful</span>}
+      {submitSuccess && (
+        <span className="profile-form__message">Submission successful</span>
+      )}
     </form>
   );
 }

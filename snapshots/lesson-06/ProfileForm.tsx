@@ -84,7 +84,9 @@ export default function ProfileForm() {
       {submitError && (
         <span className="profile-form__error">{submitError}</span>
       )}
-      {submitSuccess && <span>Submission successful</span>}
+      {submitSuccess && (
+        <span className="profile-form__message">Submission successful</span>
+      )}
     </form>
   );
 }
