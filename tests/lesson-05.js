@@ -1,7 +1,14 @@
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
-import { checkCompiles, checkBuilds, checkBehavior, normalize } from "./lib/utils.js";
+import {
+  checkCompiles,
+  checkBuilds,
+  checkBehavior,
+  normalize,
+  parseFileContent,
+  findQuerySelector,
+} from "./lib/utils.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
@@ -52,35 +59,63 @@ console.log("✅ App builds and runs without errors\n");
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
 const hook = normalize(read("src/hooks/useFormWithValidation.ts"));
+const formAst = parseFileContent(join(root, "src/components/ProfileForm/ProfileForm.tsx"));
+const hookAst = parseFileContent(join(root, "src/hooks/useFormWithValidation.ts"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
 test("Name input has the required attribute", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='input']:has(JSXAttribute[name.name='name'][value.value='name']):has(JSXAttribute[name.name='required'])",
+  );
   assert(
-    form.includes("required"),
+    el.length > 0,
     "ProfileForm.tsx does not include the required attribute on the name input"
   );
 });
 
 test("Name input has minLength set to 2", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='input']:has(JSXAttribute[name.name='name'][value.value='name'])",
+  );
+  const attr = el?.[0]?.attributes?.find((a) => a.name?.name === "minLength");
+  const ok =
+    attr?.value?.expression?.value === 2 ||
+    attr?.value?.value === "2" ||
+    attr?.value?.value === 2;
   assert(
-    form.includes("minLength={2}") || form.includes('minLength="2"'),
+    ok,
     "The name input does not have minLength={2}"
   );
 });
 
 test("Name input has maxLength set to 40", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='input']:has(JSXAttribute[name.name='name'][value.value='name'])",
+  );
+  const attr = el?.[0]?.attributes?.find((a) => a.name?.name === "maxLength");
+  const ok =
+    attr?.value?.expression?.value === 40 ||
+    attr?.value?.value === "40" ||
+    attr?.value?.value === 40;
   assert(
-    form.includes("maxLength={40}") || form.includes('maxLength="40"'),
+    ok,
     "The name input does not have maxLength={40}"
   );
 });
 
 test("Email input has type='email'", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='input']:has(JSXAttribute[name.name='type'][value.value='email'])",
+  );
   assert(
-    form.includes('type="email"'),
+    el.length > 0,
     'The email input does not have type="email"'
   );
 });
@@ -90,57 +125,89 @@ test("useFormWithValidation.ts exists", () => {
 });
 
 test("ProfileForm imports useFormWithValidation", () => {
+  const el = findQuerySelector(
+    formAst,
+    "ImportDeclaration:has(ImportSpecifier[imported.name='useFormWithValidation'])",
+  );
   assert(
-    form.includes("useFormWithValidation"),
+    el.length > 0,
     'ProfileForm.tsx does not import "useFormWithValidation"'
   );
 });
 
 test("ProfileForm destructures errors from the hook", () => {
+  const el = findQuerySelector(
+    formAst,
+    "VariableDeclarator[id.type='ObjectPattern'][init.callee.name='useFormWithValidation']:has(ObjectProperty[key.name='errors'])",
+  );
   assert(
-    form.includes("errors"),
+    el.length > 0,
     "ProfileForm.tsx does not destructure errors from useFormWithValidation"
   );
 });
 
 test("ProfileForm destructures isValid from the hook", () => {
+  const el = findQuerySelector(
+    formAst,
+    "VariableDeclarator[id.type='ObjectPattern'][init.callee.name='useFormWithValidation']:has(ObjectProperty[key.name='isValid'])",
+  );
   assert(
-    form.includes("isValid"),
+    el.length > 0,
     "ProfileForm.tsx does not destructure isValid from useFormWithValidation"
   );
 });
 
 test("ProfileForm renders an error span for the name field", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXExpressionContainer:has(LogicalExpression[operator='&&'][left.object.name='errors'][left.property.name='name'])",
+  );
   assert(
-    form.includes("errors.name"),
+    el.length > 0,
     "ProfileForm.tsx does not conditionally render errors.name below the name input"
   );
 });
 
 test("ProfileForm renders an error span for the email field", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXExpressionContainer:has(LogicalExpression[operator='&&'][left.object.name='errors'][left.property.name='email'])",
+  );
   assert(
-    form.includes("errors.email"),
+    el.length > 0,
     "ProfileForm.tsx does not conditionally render errors.email below the email input"
   );
 });
 
 test("Save button has disabled={!isValid}", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXAttribute[name.name='disabled']:has(JSXExpressionContainer UnaryExpression[operator='!'][argument.name='isValid'])",
+  );
   assert(
-    form.includes("!isValid"),
+    el.length > 0,
     "The Save button does not use !isValid in its disabled prop"
   );
 });
 
 test("useFormWithValidation reads validationMessage from the input", () => {
+  const el = findQuerySelector(
+    hookAst,
+    "MemberExpression[property.name='validationMessage']",
+  );
   assert(
-    hook.includes("validationMessage"),
+    el.length > 0,
     "useFormWithValidation.ts does not read validationMessage — it should store the browser's validation message in errors"
   );
 });
 
 test("useFormWithValidation calls checkValidity on the form", () => {
+  const el = findQuerySelector(
+    hookAst,
+    "CallExpression[callee.property.name='checkValidity']",
+  );
   assert(
-    hook.includes("checkValidity"),
+    el.length > 0,
     "useFormWithValidation.ts does not call checkValidity() — it needs this to set isValid correctly"
   );
 });
