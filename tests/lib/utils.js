@@ -80,7 +80,6 @@ export function findQuerySelector(ast, selector) {
   try {
     return esquery(ast, selector);
   } catch (error) {
-    console.error(error);
     return [];
   }
 }
