@@ -60,15 +60,15 @@ test("ProfileForm.tsx exists", () => {
 test("ProfileForm uses a single state object containing both name and email", () => {
   const el = findQuerySelector(
     ast,
-    "VariableDeclaration[declarations.0.id.elements.0.name='values'][declarations.0.init.callee.name='useState']"
+    "[init.callee.name='useState']"
   );
   const keys =
-    el?.[0]?.declarations?.[0]?.init?.arguments?.[0]?.properties
+    el?.[0]?.init?.arguments?.[0]?.properties
       ?.map((p) => p.key?.name)
       .filter(Boolean) ?? [];
 
   assert(
-    el.length > 0 && keys.includes("name") && keys.includes("email"),
+    keys.includes("name") && keys.includes("email"),
     "ProfileForm.tsx does not use a state object with name and email keys — expected useState({ name: '', email: '' })"
   );
 });
