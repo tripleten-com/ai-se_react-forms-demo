@@ -8,6 +8,8 @@ import {
   summary,
   checkBehavior,
   normalize,
+  parseFileContent,
+  findQuerySelector,
 } from "./lib/utils.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -26,63 +28,98 @@ console.log("\nLesson 06: Form Submission\n");
 runGates(root);
 
 const form = normalize(read("src/components/ProfileForm/ProfileForm.tsx"));
+const formAst = parseFileContent(join(root, "src/components/ProfileForm/ProfileForm.tsx"));
 
 test("ProfileForm.tsx exists", () => {
   assert(form !== null, "src/components/ProfileForm/ProfileForm.tsx not found");
 });
 
 test("ProfileForm imports saveProfile from the API", () => {
+  const el = findQuerySelector(
+    formAst,
+    "ImportDeclaration:has(ImportSpecifier[imported.name='saveProfile'])",
+  );
   assert(
-    form.includes("saveProfile"),
+    el.length > 0,
     'ProfileForm.tsx does not import "saveProfile" from ../../utils/api'
   );
 });
 
 test("ProfileForm declares isSubmitting state", () => {
+  const el = findQuerySelector(
+    formAst,
+    "VariableDeclaration[declarations.0.id.elements.0.name='isSubmitting'][declarations.0.init.callee.name='useState']",
+  );
   assert(
-    form.includes("isSubmitting"),
+    el.length > 0,
     "ProfileForm.tsx does not declare isSubmitting state"
   );
 });
 
 test("ProfileForm defines a handleSubmit function", () => {
+  const fnDecl = findQuerySelector(formAst, "FunctionDeclaration[id.name='handleSubmit']");
+  const fnVar = findQuerySelector(formAst, "VariableDeclarator[id.name='handleSubmit']");
+
   assert(
-    form.includes("handleSubmit"),
+    fnDecl.length > 0 || fnVar.length > 0,
     "ProfileForm.tsx does not define a handleSubmit function"
   );
 });
 
 test("handleSubmit calls e.preventDefault()", () => {
+  const handleSubmit =
+    findQuerySelector(formAst, "FunctionDeclaration[id.name='handleSubmit']")?.[0] ??
+    findQuerySelector(formAst, "VariableDeclarator[id.name='handleSubmit']")?.[0]?.init;
+
+  const el = findQuerySelector(handleSubmit, "CallExpression[callee.property.name='preventDefault']");
   assert(
-    form.includes("preventDefault"),
+    el.length > 0,
     "handleSubmit does not call e.preventDefault() — without it the browser reloads on submit"
   );
 });
 
 test("The form element uses onSubmit", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='form']:has(JSXAttribute[name.name='onSubmit'])",
+  );
   assert(
-    form.includes("onSubmit"),
+    el.length > 0,
     "The <form> element does not have an onSubmit prop — attach handleSubmit here, not to the button's onClick"
   );
 });
 
 test("Save button is disabled when isSubmitting is true", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXAttribute[name.name='disabled']:has(Identifier[name='isSubmitting'])",
+  );
   assert(
-    form.includes("isSubmitting"),
+    el.length > 0,
     "The Save button's disabled prop does not include isSubmitting"
   );
 });
 
 test("Button label changes while submitting", () => {
+  const cond = findQuerySelector(formAst, "ConditionalExpression[test.name='isSubmitting']")?.[0];
+  const label = cond?.consequent?.value ?? "";
   assert(
-    form.includes("Saving") || form.includes("saving"),
+    /saving/i.test(label),
     "The button does not show a different label while submitting — expected something like: isSubmitting ? 'Saving…' : 'Save'"
   );
 });
 
 test("setIsSubmitting(false) is called in the finally block", () => {
+  const handleSubmit =
+    findQuerySelector(formAst, "FunctionDeclaration[id.name='handleSubmit']")?.[0] ??
+    findQuerySelector(formAst, "VariableDeclarator[id.name='handleSubmit']")?.[0]?.init;
+
+  const el = findQuerySelector(
+    handleSubmit,
+    "TryStatement:has(CallExpression[callee.name='setIsSubmitting'][arguments.0.value=false])",
+  );
   assert(
-    form.includes("finally") && form.includes("setIsSubmitting(false)"),
+    el.length > 0,
     "handleSubmit does not call setIsSubmitting(false) in a finally block — the button will stay disabled after an error"
   );
 });
