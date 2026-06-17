@@ -13,11 +13,20 @@ describe("Lesson 04 — useForm hook", () => {
     const user = userEvent.setup();
     render(<ProfileForm />);
 
-    await user.type(await screen.findByLabelText(/name/i), "Alice");
-    await user.type(await screen.findByLabelText(/email/i), "alice@example.com");
+    const nameInput = await screen.findByLabelText(/name/i);
+    const emailInput = screen.getByLabelText(/email/i);
 
-    expect(screen.getByLabelText(/name/i)).toHaveValue("Alice");
-    expect(screen.getByLabelText(/email/i)).toHaveValue("alice@example.com");
+    await user.clear(nameInput);
+    await user.clear(emailInput);
+
+    expect(nameInput).toHaveValue("");
+    expect(emailInput).toHaveValue("");
+
+    await user.type(nameInput, "Alice");
+    await user.type(emailInput, "alice@example.com");
+
+    expect(nameInput).toHaveValue("Alice");
+    expect(emailInput).toHaveValue("alice@example.com");
   });
 
   it("clearing a field via backspace reduces its value", async () => {
@@ -25,6 +34,7 @@ describe("Lesson 04 — useForm hook", () => {
     render(<ProfileForm />);
 
     const nameInput = await screen.findByLabelText(/name/i);
+    await user.clear(nameInput);
     await user.type(nameInput, "Hi");
     await user.type(nameInput, "{backspace}");
 
