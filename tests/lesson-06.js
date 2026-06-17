@@ -114,12 +114,20 @@ test("setIsSubmitting(false) is called in the finally block", () => {
     findQuerySelector(formAst, "FunctionDeclaration[id.name='handleSubmit']")?.[0] ??
     findQuerySelector(formAst, "VariableDeclarator[id.name='handleSubmit']")?.[0]?.init;
 
-  const el = findQuerySelector(
-    handleSubmit,
-    "TryStatement:has(CallExpression[callee.name='setIsSubmitting'][arguments.0.value=false])",
+  const tryStatements = findQuerySelector(handleSubmit, "TryStatement");
+  const hasFinallyReset = tryStatements.some((tryStmt) =>
+    findQuerySelector(
+      tryStmt.finalizer,
+      "CallExpression[callee.name='setIsSubmitting']",
+    ).some(
+      (call) =>
+        call.arguments[0]?.type === "BooleanLiteral" &&
+        call.arguments[0]?.value === false,
+    ),
   );
+
   assert(
-    el.length > 0,
+    hasFinallyReset,
     "handleSubmit does not call setIsSubmitting(false) in a finally block — the button will stay disabled after an error"
   );
 });

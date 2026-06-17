@@ -77,7 +77,7 @@ test("onChange calls the state setter with e.target.value", () => {
     `JSXExpressionContainer:has([object.object.name='${evtName}'][object.property.name='target'][property.name='value'])`
   );
   assert(
-    !!targetEl,
+    targetEl.length > 0,
     "onChange does not use e.target.value to update state"
   );
 });
