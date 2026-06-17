@@ -109,6 +109,28 @@ test("Name input has maxLength set to 40", () => {
   );
 });
 
+test("Name form field renders an error span", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXExpressionContainer[expression.object.name='errors'][expression.property.name='name']",
+  );
+  assert(
+    el.length > 0,
+    "ProfileForm.tsx does not conditionally render errors.name below the name input"
+  );
+});
+
+test("Email input has the required attribute", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXOpeningElement[name.name='input']:has(JSXAttribute[name.name='name'][value.value='email']):has(JSXAttribute[name.name='required'])",
+  );
+  assert(
+    el.length > 0,
+    "ProfileForm.tsx does not include the required attribute on the email input"
+  );
+});
+
 test("Email input has type='email'", () => {
   const el = findQuerySelector(
     formAst,
@@ -118,6 +140,18 @@ test("Email input has type='email'", () => {
     el.length > 0,
     'The email input does not have type="email"'
   );
+});
+
+test("Email form field renders an error span", () => {
+  const el = findQuerySelector(
+    formAst,
+    "JSXExpressionContainer[expression.object.name='errors'][expression.property.name='email']",
+  );
+  assert(
+    el.length > 0,
+    "ProfileForm.tsx does not conditionally render errors.email below the email input"
+  );
+
 });
 
 test("useFormWithValidation.ts exists", () => {
